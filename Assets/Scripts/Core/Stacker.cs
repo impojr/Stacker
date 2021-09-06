@@ -59,7 +59,7 @@ namespace Assets.Scripts.Core
             MoveDir = MovementDirection.Right;
 
             for (var i = 0; i < Width; i++)
-            {
+            {  
                 for (var j = 0; j < Height; j++)
                 {
                     Stack[i, j] = new Square();
@@ -107,7 +107,7 @@ namespace Assets.Scripts.Core
             {
                 var previousRow = ActiveRow - 1;
                 var nextRowStart = 0;
-                for (var i = 0; i < StackWidth; i++)
+                for (var i = 0; i < Width; i++)
                 {
                     if (Stack[i, previousRow].State == State.Occupied)
                     {
