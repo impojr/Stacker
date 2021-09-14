@@ -1964,8 +1964,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Grid: {fileID: 728591657}
   blocks: []
-  Speed: 0.25
+  TimeBetweenTicks: 0.5
   CanPlace: 0
+  TimeDecreaseIncrement: 0.025
+  MinTimeBetweenTicks: 0.025
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0

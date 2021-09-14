@@ -9,25 +9,25 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public GameObject Grid;
-    public Image[] blocks;
+    public Image[] Blocks;
     private Stacker _stacker;
 
+    private Coroutine _tickCoroutine;
 
-    private Coroutine tickCoroutine;
-
-    public float Speed = 1f;
+    public float TimeBetweenTicks = 0.5f;
     public bool CanPlace;
-
+    public float TimeDecreaseIncrement = 0.025f;
+    public float MinTimeBetweenTicks = 0.05f;
 
     // Start is called before the first frame update
     private void Start()
     {
         CanPlace = false;
-        blocks = Grid.GetComponentsInChildren<Image>();
-        blocks = blocks.Skip(1).ToArray();
+        Blocks = Grid.GetComponentsInChildren<Image>();
+        Blocks = Blocks.Skip(1).ToArray();
         _stacker = new Stacker(7, 14, 3);
         _stacker.Tick();
-        tickCoroutine = StartCoroutine(TickGrid());
+        _tickCoroutine = StartCoroutine(TickGrid());
         StartCoroutine(EnablePlacement());
     }
 
@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(Speed);
+            yield return new WaitForSeconds(TimeBetweenTicks);
             _stacker.Tick();
             DisplayGrid();
         }
@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
     {
         //we are doubling the speed before we can place so the player
         //cannot just stack one on top of the other in quick succession
-        yield return new WaitForSeconds(Speed * 2);
+        yield return new WaitForSeconds(TimeBetweenTicks * 2);
         CanPlace = true;
     }
 
@@ -54,10 +54,23 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) && CanPlace)
         {
-            StopCoroutine(tickCoroutine);
-            _stacker.Place();
+            StopCoroutine(_tickCoroutine);
+            var missedSquares = _stacker.Place();
+            if (missedSquares.Count == 0)
+            {
+                if (TimeBetweenTicks > MinTimeBetweenTicks)
+                {
+                    TimeBetweenTicks -= TimeDecreaseIncrement;
+                }
+            }
             CanPlace = false;
-            tickCoroutine = StartCoroutine(TickGrid());
+
+            if (_stacker.ActiveRow == _stacker.Height)
+            {
+                _stacker.ResetHeight();
+            }
+
+            _tickCoroutine = StartCoroutine(TickGrid());
             StartCoroutine(EnablePlacement());
         }
     }
@@ -71,11 +84,11 @@ public class GameManager : MonoBehaviour
             {
                 if (stack[i, j].State == State.Occupied)
                 {
-                    blocks[_stacker.Width * j + i].color = Color.red;
+                    Blocks[_stacker.Width * j + i].color = Color.red;
                 }
                 else
                 {
-                    blocks[_stacker.Width * j + i].color = Color.green;
+                    Blocks[_stacker.Width * j + i].color = Color.green;
                 }
             }
         }

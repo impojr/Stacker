@@ -123,28 +123,33 @@ namespace Assets.Scripts.Core
         private void MoveStackInRow(List<int> cellsToSwitch)
         {
             // If we are going left and the first item in list is at the beginning of the row,
-            // Do nothing and change movement direction
+            // Change movement direction
             if (MoveDir == MovementDirection.Left)
             {
                 if (cellsToSwitch.First() == 0)
                 {
                     MoveDir = MovementDirection.Right;
-                    return;
+                    MoveStack(cellsToSwitch, 1);
                 }
-
-                MoveStack(cellsToSwitch, -1);
+                else
+                {
+                    MoveStack(cellsToSwitch, -1);
+                }
             }
             else
             {
                 // If we are going right and the last item in list at the end of the row,
-                // Do nothing and change movement direction
+                // Change movement direction
                 if (cellsToSwitch.Last() == Width - 1)
                 {
                     MoveDir = MovementDirection.Left;
-                    return;
+                    MoveStack(cellsToSwitch, -1);
+                }
+                else
+                {
+                    MoveStack(cellsToSwitch, 1);
                 }
 
-                MoveStack(cellsToSwitch, 1);
             }
         }
 
