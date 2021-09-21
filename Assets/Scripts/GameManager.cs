@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using Assets.Scripts.Core;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -19,12 +20,57 @@ public class GameManager : MonoBehaviour
     public float TimeDecreaseIncrement = 0.025f;
     public float MinTimeBetweenTicks = 0.05f;
 
+    [Space] 
+    [Header("UI Components")]
+    public GameObject startScreenPanel;
+    public TMP_Text ssHighScoreText;
+    
+    public GameObject gameplayScreenPanel;
+    public TMP_Text gpHighScoreText;
+    public TMP_Text currentScoreText;
+    public TMP_Text speedText;
+    public TMP_Text gridsClearedText;
+
+    public GameObject gameoverScreenPanel;
+    public TMP_Text goHighScoreText;
+    public TMP_Text finalScoreText;
+
+    private float _initialTimeBetweenTicks;
+    private int _gridsCleared;
+    private int _speed;
+    private int _score;
+    private int _highScore;
+
     // Start is called before the first frame update
     private void Start()
     {
+        gameplayScreenPanel.SetActive(false);
+        gameoverScreenPanel.SetActive(false);
+        startScreenPanel.SetActive(true);
+
+        _initialTimeBetweenTicks = TimeBetweenTicks;
         CanPlace = false;
         Blocks = Grid.GetComponentsInChildren<Image>();
         Blocks = Blocks.Skip(1).ToArray();
+    }
+
+    public void StartGame()
+    {
+        gameoverScreenPanel.SetActive(false);
+        startScreenPanel.SetActive(false);
+        gameplayScreenPanel.SetActive(true);
+
+        //Initialize/Reset Game Variables
+        TimeBetweenTicks = _initialTimeBetweenTicks;
+        _score = 0;
+        _speed = 1;
+        _gridsCleared = 0;
+
+        currentScoreText.text = _score.ToString();
+        speedText.text = _speed.ToString();
+        gridsClearedText.text = _gridsCleared.ToString();
+        gpHighScoreText.text = _highScore.ToString();
+
         _stacker = new Stacker(7, 14, 3);
         _stacker.Tick();
         _tickCoroutine = StartCoroutine(TickGrid());
@@ -63,6 +109,14 @@ public class GameManager : MonoBehaviour
                     TimeBetweenTicks -= TimeDecreaseIncrement;
                 }
             }
+            else
+            {
+                if (_stacker.StackWidth < 1)
+                {
+                    GameOver();
+                    return;
+                }
+            }
             CanPlace = false;
 
             if (_stacker.ActiveRow == _stacker.Height)
@@ -73,6 +127,16 @@ public class GameManager : MonoBehaviour
             _tickCoroutine = StartCoroutine(TickGrid());
             StartCoroutine(EnablePlacement());
         }
+    }
+
+    private void GameOver()
+    {
+        StopCoroutine(_tickCoroutine);
+        CanPlace = false;
+
+        startScreenPanel.SetActive(false);
+        gameplayScreenPanel.SetActive(false);
+        gameoverScreenPanel.SetActive(true);
     }
 
     private void DisplayGrid()
