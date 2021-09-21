@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text gpHighScoreText;
     public TMP_Text currentScoreText;
     public TMP_Text speedText;
+    public TMP_Text rowsClearedText;
     public TMP_Text gridsClearedText;
 
     public GameObject gameoverScreenPanel;
@@ -36,19 +37,25 @@ public class GameManager : MonoBehaviour
     public TMP_Text finalScoreText;
 
     private float _initialTimeBetweenTicks;
+    private int _rowsCleared;
     private int _gridsCleared;
     private int _speed;
     private int _score;
     private int _highScore;
+    private readonly string _highScoreKey = "HighScore";
 
     // Start is called before the first frame update
     private void Start()
     {
+        _highScore = PlayerPrefs.GetInt(_highScoreKey, 0);
+        _initialTimeBetweenTicks = TimeBetweenTicks;
+
+        ssHighScoreText.text = _highScore.ToString();
+
         gameplayScreenPanel.SetActive(false);
         gameoverScreenPanel.SetActive(false);
         startScreenPanel.SetActive(true);
 
-        _initialTimeBetweenTicks = TimeBetweenTicks;
         CanPlace = false;
         Blocks = Grid.GetComponentsInChildren<Image>();
         Blocks = Blocks.Skip(1).ToArray();
@@ -69,9 +76,11 @@ public class GameManager : MonoBehaviour
         currentScoreText.text = _score.ToString();
         speedText.text = _speed.ToString();
         gridsClearedText.text = _gridsCleared.ToString();
+        rowsClearedText.text = _rowsCleared.ToString();
         gpHighScoreText.text = _highScore.ToString();
 
         _stacker = new Stacker(7, 14, 3);
+        DisplayGrid();
         _stacker.Tick();
         _tickCoroutine = StartCoroutine(TickGrid());
         StartCoroutine(EnablePlacement());
@@ -107,7 +116,18 @@ public class GameManager : MonoBehaviour
                 if (TimeBetweenTicks > MinTimeBetweenTicks)
                 {
                     TimeBetweenTicks -= TimeDecreaseIncrement;
+                    _speed++;
+                    speedText.text = _speed.ToString();
                 }
+                else
+                {
+                    speedText.text = "MAX";
+                }
+
+                _score += _stacker.StackWidth;
+                currentScoreText.text = _score.ToString();
+                _rowsCleared++;
+                rowsClearedText.text = _rowsCleared.ToString();
             }
             else
             {
@@ -116,12 +136,19 @@ public class GameManager : MonoBehaviour
                     GameOver();
                     return;
                 }
+
+                _score += _stacker.StackWidth;
+                currentScoreText.text = _score.ToString();
+                _rowsCleared++;
+                rowsClearedText.text = _rowsCleared.ToString();
             }
             CanPlace = false;
 
             if (_stacker.ActiveRow == _stacker.Height)
             {
                 _stacker.ResetHeight();
+                _gridsCleared++;
+                gridsClearedText.text = _gridsCleared.ToString();
             }
 
             _tickCoroutine = StartCoroutine(TickGrid());
@@ -133,6 +160,16 @@ public class GameManager : MonoBehaviour
     {
         StopCoroutine(_tickCoroutine);
         CanPlace = false;
+
+        if (_score > _highScore)
+        {
+            _highScore = _score;
+            PlayerPrefs.SetInt(_highScoreKey, _score);
+            PlayerPrefs.Save();
+        }
+
+        goHighScoreText.text = _highScore.ToString();
+        finalScoreText.text = _score.ToString();
 
         startScreenPanel.SetActive(false);
         gameplayScreenPanel.SetActive(false);
