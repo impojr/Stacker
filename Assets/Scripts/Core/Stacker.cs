@@ -153,6 +153,11 @@ namespace Assets.Scripts.Core
             }
         }
 
+        /// <summary>
+        /// Moves stack left or right.
+        /// </summary>
+        /// <param name="cellsToSwitch">The column number of the cells that are being moved</param>
+        /// <param name="increment">+1 or -1</param>
         private void MoveStack(IList<int> cellsToSwitch, int increment)
         {
             for (var i = 0; i < cellsToSwitch.Count; i++)
@@ -166,6 +171,10 @@ namespace Assets.Scripts.Core
             }
         }
 
+        /// <summary>
+        /// Fills (makes squares occupied) in row in based on StackWidth
+        /// </summary>
+        /// <param name="startIndex">Where in the row filling starts.</param>
         private void FillRow(int startIndex)
         {
             for (var i = 0; i < StackWidth; i++)

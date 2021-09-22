@@ -77,11 +77,30 @@ namespace Assets.Tests
 
             grid.Tick();
 
-            Assert.AreEqual(State.Vacant, grid.Stack[2, 0].State);
+            Assert.AreEqual(State.Vacant, grid.Stack[1, 0].State);
+            Assert.AreEqual(State.Occupied, grid.Stack[2, 0].State);
             Assert.AreEqual(State.Occupied, grid.Stack[3, 0].State);
             Assert.AreEqual(State.Occupied, grid.Stack[4, 0].State);
-            Assert.AreEqual(State.Occupied, grid.Stack[5, 0].State);
+            Assert.AreEqual(State.Vacant, grid.Stack[5, 0].State);
             Assert.AreEqual(grid.MoveDir, MovementDirection.Left);
+
+            grid.Tick();
+
+            Assert.AreEqual(State.Vacant, grid.Stack[0, 0].State);
+            Assert.AreEqual(State.Occupied, grid.Stack[1, 0].State);
+            Assert.AreEqual(State.Occupied, grid.Stack[2, 0].State);
+            Assert.AreEqual(State.Occupied, grid.Stack[3, 0].State);
+            Assert.AreEqual(State.Vacant, grid.Stack[4, 0].State);
+
+            grid.Tick();
+            grid.Tick();
+
+            Assert.AreEqual(State.Vacant, grid.Stack[0, 0].State);
+            Assert.AreEqual(State.Occupied, grid.Stack[1, 0].State);
+            Assert.AreEqual(State.Occupied, grid.Stack[2, 0].State);
+            Assert.AreEqual(State.Occupied, grid.Stack[3, 0].State);
+            Assert.AreEqual(State.Vacant, grid.Stack[4, 0].State);
+            Assert.AreEqual(grid.MoveDir, MovementDirection.Right);
 
             grid.Tick();
 
@@ -90,22 +109,6 @@ namespace Assets.Tests
             Assert.AreEqual(State.Occupied, grid.Stack[3, 0].State);
             Assert.AreEqual(State.Occupied, grid.Stack[4, 0].State);
             Assert.AreEqual(State.Vacant, grid.Stack[5, 0].State);
-
-            grid.Tick();
-            grid.Tick();
-
-            Assert.AreEqual(State.Occupied, grid.Stack[0, 0].State);
-            Assert.AreEqual(State.Occupied, grid.Stack[1, 0].State);
-            Assert.AreEqual(State.Occupied, grid.Stack[2, 0].State);
-            Assert.AreEqual(State.Vacant, grid.Stack[3, 0].State);
-            Assert.AreEqual(grid.MoveDir, MovementDirection.Left);
-
-            grid.Tick();
-
-            Assert.AreEqual(State.Occupied, grid.Stack[0, 0].State);
-            Assert.AreEqual(State.Occupied, grid.Stack[1, 0].State);
-            Assert.AreEqual(State.Occupied, grid.Stack[2, 0].State);
-            Assert.AreEqual(State.Vacant, grid.Stack[3, 0].State);
             Assert.AreEqual(grid.MoveDir, MovementDirection.Right);
         }
 
