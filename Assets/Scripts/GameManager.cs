@@ -23,10 +23,10 @@ public class GameManager : MonoBehaviour
     public TMP_Text speedText;
     public TMP_Text rowsClearedText;
     public TMP_Text gridsClearedText;
+    public Button playAgainButton;
+    public Button menuButton;
 
-    public GameObject gameoverScreenPanel;
-    public TMP_Text goHighScoreText;
-    public TMP_Text finalScoreText;
+    public GameObject creditsPanel;
 
     private Stacker _stacker;
     private Coroutine _tickCoroutine;
@@ -88,9 +88,7 @@ public class GameManager : MonoBehaviour
 
         _initialTimeBetweenTicks = _timeBetweenTicks;
 
-        gameplayScreenPanel.SetActive(false);
-        gameoverScreenPanel.SetActive(false);
-        startScreenPanel.SetActive(true);
+        ShowStartMenu();
 
         _canPlace = false;
         Blocks = Grid.GetComponentsInChildren<Image>();
@@ -99,8 +97,9 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        gameoverScreenPanel.SetActive(false);
         startScreenPanel.SetActive(false);
+        playAgainButton.gameObject.SetActive(false);
+        menuButton.gameObject.SetActive(false);
         gameplayScreenPanel.SetActive(true);
 
         InitializeGameVariables();
@@ -110,6 +109,20 @@ public class GameManager : MonoBehaviour
         _stacker.Tick();
         _tickCoroutine = StartCoroutine(TickGrid());
         StartCoroutine(EnablePlacement());
+    }
+
+    public void ShowStartMenu()
+    {
+        gameplayScreenPanel.SetActive(false);
+        startScreenPanel.SetActive(true);
+        creditsPanel.SetActive(false);
+    }
+
+    public void ShowCredits()
+    {
+        gameplayScreenPanel.SetActive(false);
+        startScreenPanel.SetActive(false);
+        creditsPanel.SetActive(true);
     }
 
     private void InitializeGameVariables()
@@ -218,12 +231,8 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.Save();
         }
 
-        goHighScoreText.text = _highScore.ToString();
-        finalScoreText.text = _score.ToString();
-
-        startScreenPanel.SetActive(false);
-        gameplayScreenPanel.SetActive(false);
-        gameoverScreenPanel.SetActive(true);
+        playAgainButton.gameObject.SetActive(true);
+        menuButton.gameObject.SetActive(true);
     }
 
     private void DisplayGrid()
