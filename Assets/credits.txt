@@ -1,3 +1,9 @@
 Fonts
-Blade Runner Movie Font by Phil Steinschneider
-NFS by Jltv
+Blade Runner Movie Font by Phil Steinschneider (dafont.com)
+NFS by Jltv (dafont.com)
+
+Sounds
+Universal Sound FX by IMPHENZIA (assetstore.unity.com)
+
+Skybox
+SpaceSkiesFree by PULSAR BYTES (assetstore.unity.com)
