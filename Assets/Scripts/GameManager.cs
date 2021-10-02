@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using Assets.Scripts.Core;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour
 {
@@ -28,6 +30,12 @@ public class GameManager : MonoBehaviour
 
     public GameObject creditsPanel;
 
+    public AudioSource UiTextScaleAudioSource;
+    public AudioSource UiTextMovementAudioSource;
+    public AudioSource NewHighScoreAudioSource;
+
+    public Material newHighScoreMaterial;
+
     private Stacker _stacker;
     private Coroutine _tickCoroutine;
     private float _timeBetweenTicks = 0.5f;
@@ -38,6 +46,16 @@ public class GameManager : MonoBehaviour
     private int _speed;
     private int _score;
     private int _highScore;
+
+    private Vector3 _currentScoreTextPosition;
+    private Vector3 _speedTextPosition;
+    private Vector3 _gpHighScoreTextPosition;
+    private Vector3 _rowsClearedTextPosition;
+    private Vector3 _gridsClearedTextPosition;
+
+    private Material originalHighScoreTextMaterial;
+    private bool updateHighScoreColor;
+
     private SortedList<int, float> _speedModifiers;
     private readonly string _highScoreKey = "HighScore";
 
@@ -80,14 +98,45 @@ public class GameManager : MonoBehaviour
         _speedModifiers.Add(352, 0.025f);
     }
 
+    private void SetInitialTextFieldPositions()
+    {
+        _currentScoreTextPosition = currentScoreText.transform.position;
+        _speedTextPosition = speedText.transform.position;
+        _gpHighScoreTextPosition = gpHighScoreText.transform.position;
+        _rowsClearedTextPosition = rowsClearedText.transform.position;
+        _gridsClearedTextPosition = gridsClearedText.transform.position;
+    }
+
+    private void ResetTextFieldPositions()
+    {
+        currentScoreText.transform.position = _currentScoreTextPosition;
+        currentScoreText.transform.localScale = Vector3.one;
+
+        speedText.transform.position = _speedTextPosition;
+        speedText.transform.localScale = Vector3.one;
+
+        gpHighScoreText.transform.position = _gpHighScoreTextPosition;
+        gpHighScoreText.transform.localScale = Vector3.one;
+
+        rowsClearedText.transform.position = _rowsClearedTextPosition;
+        rowsClearedText.transform.localScale = Vector3.one;
+
+        gridsClearedText.transform.position = _gridsClearedTextPosition;
+        gridsClearedText.transform.localScale = Vector3.one;
+    }
+
     private void Start()
     {
         InitializeSpeedModifiers();
+        SetInitialTextFieldPositions();
+
+        originalHighScoreTextMaterial = gpHighScoreText.fontMaterial;
+
         _highScore = PlayerPrefs.GetInt(_highScoreKey, 0);
         ssHighScoreText.text = _highScore.ToString();
 
         _initialTimeBetweenTicks = _timeBetweenTicks;
-
+        
         ShowStartMenu();
 
         _canPlace = false;
@@ -97,12 +146,17 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        updateHighScoreColor = false;
+        gpHighScoreText.color = Color.white;
+        gpHighScoreText.fontMaterial = originalHighScoreTextMaterial;
+
         startScreenPanel.SetActive(false);
         playAgainButton.gameObject.SetActive(false);
         menuButton.gameObject.SetActive(false);
         gameplayScreenPanel.SetActive(true);
 
         InitializeGameVariables();
+        ResetTextFieldPositions();
 
         _stacker = new Stacker(7, 14, 3);
         DisplayGrid();
@@ -158,8 +212,45 @@ public class GameManager : MonoBehaviour
         _canPlace = true;
     }
 
+    private float lerpTime = 5f;
+    private float t = 0f;
+    private int colourIndex = 0;
+
+    private Color[] highScoreColours = new[]
+    {
+        Color.red, new Color(1, 0.5f, 0), new Color(1,1,0), Color.green, Color.blue, new Color(75f/255f, 0, 130f/255f), new Color(148f/255f,0,211f/255f) 
+    };
+
     private void Update()
     {
+        if (updateHighScoreColor)
+        {
+            gpHighScoreText.color = Color.Lerp(gpHighScoreText.color, highScoreColours[colourIndex],
+                lerpTime * Time.deltaTime);
+            
+            t = Mathf.Lerp(t, 1f, lerpTime * Time.deltaTime);
+            if (t > 0.9f)
+            {
+                t = 0f;
+                colourIndex++;
+                colourIndex = colourIndex >= highScoreColours.Length ? 0 : colourIndex;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            GameOver();
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            _highScore = 0;
+            _score = 100;
+            GameOver();
+            return;
+        }
+
         if (Input.GetKeyDown(KeyCode.Space) && _canPlace)
         {
             StopCoroutine(_tickCoroutine);
@@ -223,16 +314,88 @@ public class GameManager : MonoBehaviour
     {
         StopCoroutine(_tickCoroutine);
         _canPlace = false;
+        var newHighScoreAchieved = false;
 
         if (_score > _highScore)
         {
+            newHighScoreAchieved = true;
             _highScore = _score;
             PlayerPrefs.SetInt(_highScoreKey, _score);
             PlayerPrefs.Save();
         }
 
-        playAgainButton.gameObject.SetActive(true);
-        menuButton.gameObject.SetActive(true);
+        Effects(newHighScoreAchieved);
+    }
+
+    private void Effects(bool newHighScoreAchieved)
+    {
+        float moveDistance = 50f;
+        float moveDuration = 0.1f;
+        Vector3 scaleEffectVector = new Vector3(2, 2, 2);
+        Vector3 effectVector = new Vector3(1, 1, 1);
+        float scaleEffectDuration = 0.25f;
+        float effectDuration = 0.1f;
+
+        List<TMP_Text> test = new List<TMP_Text> { currentScoreText, speedText, rowsClearedText, gridsClearedText };
+
+        if (!newHighScoreAchieved)
+        {
+            test.Add(gpHighScoreText);
+        }
+        else
+        {
+            gpHighScoreText.gameObject.SetActive(false);
+        }
+
+        test.ForEach(x => x.gameObject.SetActive(false));
+
+        Sequence mySequence = DOTween.Sequence();
+        mySequence.AppendInterval(1f);
+
+        foreach (var text in test)
+        {
+            mySequence.Append(text.transform.DOMoveX(text.transform.position.x - moveDistance, moveDuration).OnStart(() =>
+                {
+                    text.gameObject.SetActive(true);
+                    UiTextMovementAudioSource.Play();
+                }));
+            mySequence.Append(text.transform.DOScale(scaleEffectVector, scaleEffectDuration).OnComplete(() =>
+            {
+                UiTextScaleAudioSource.Play();
+                text.transform.DOPunchScale(new Vector3(0, 2, 2), effectDuration);
+                text.transform.DOPunchRotation(effectVector, effectDuration);
+                text.transform.DOPunchPosition(effectVector, effectDuration);
+            }));
+
+            mySequence.AppendInterval(0.5f);
+        }
+
+        if (newHighScoreAchieved)
+        {
+            mySequence.AppendInterval(0.5f);
+
+            mySequence.Append(gpHighScoreText.transform.DOMoveX(gpHighScoreText.transform.position.x - moveDistance, moveDuration).OnStart(() =>
+            {
+                gpHighScoreText.gameObject.SetActive(true);
+                UiTextMovementAudioSource.Play();
+            }));
+            mySequence.Append(gpHighScoreText.transform.DOScale(scaleEffectVector, scaleEffectDuration).OnComplete(() =>
+            {
+                UiTextScaleAudioSource.Play();
+                NewHighScoreAudioSource.Play();
+                gpHighScoreText.transform.DOPunchScale(new Vector3(0, 2, 2), effectDuration);
+                gpHighScoreText.transform.DOPunchRotation(effectVector, effectDuration);
+                gpHighScoreText.transform.DOPunchPosition(effectVector, effectDuration);
+                updateHighScoreColor = true;
+                gpHighScoreText.fontMaterial = newHighScoreMaterial;
+            }));
+        }
+
+        mySequence.OnComplete(() =>
+        {
+            playAgainButton.gameObject.SetActive(true);
+            menuButton.gameObject.SetActive(true);
+        });
     }
 
     private void DisplayGrid()
