@@ -34,8 +34,6 @@ public class GameManager : MonoBehaviour
     public AudioSource UiTextMovementAudioSource;
     public AudioSource NewHighScoreAudioSource;
 
-    public Material newHighScoreMaterial;
-
     private Stacker _stacker;
     private Coroutine _tickCoroutine;
     private float _timeBetweenTicks = 0.5f;
@@ -53,7 +51,6 @@ public class GameManager : MonoBehaviour
     private Vector3 _rowsClearedTextPosition;
     private Vector3 _gridsClearedTextPosition;
 
-    private Material originalHighScoreTextMaterial;
     private bool updateHighScoreColor;
 
     private SortedList<int, float> _speedModifiers;
@@ -130,8 +127,6 @@ public class GameManager : MonoBehaviour
         InitializeSpeedModifiers();
         SetInitialTextFieldPositions();
 
-        originalHighScoreTextMaterial = gpHighScoreText.fontMaterial;
-
         _highScore = PlayerPrefs.GetInt(_highScoreKey, 0);
         ssHighScoreText.text = _highScore.ToString();
 
@@ -148,8 +143,8 @@ public class GameManager : MonoBehaviour
     {
         updateHighScoreColor = false;
         gpHighScoreText.color = Color.white;
-        gpHighScoreText.fontMaterial = originalHighScoreTextMaterial;
-
+        DOTween.Kill(gpHighScoreText.transform);
+        
         startScreenPanel.SetActive(false);
         playAgainButton.gameObject.SetActive(false);
         menuButton.gameObject.SetActive(false);
@@ -386,8 +381,8 @@ public class GameManager : MonoBehaviour
                 gpHighScoreText.transform.DOPunchScale(new Vector3(0, 2, 2), effectDuration);
                 gpHighScoreText.transform.DOPunchRotation(effectVector, effectDuration);
                 gpHighScoreText.transform.DOPunchPosition(effectVector, effectDuration);
+                gpHighScoreText.transform.DOScaleY(3f, 0.5f).SetLoops(-1, LoopType.Yoyo);
                 updateHighScoreColor = true;
-                gpHighScoreText.fontMaterial = newHighScoreMaterial;
             }));
         }
 
