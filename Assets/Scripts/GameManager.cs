@@ -33,6 +33,11 @@ public class GameManager : MonoBehaviour
     public AudioSource UiTextScaleAudioSource;
     public AudioSource UiTextMovementAudioSource;
     public AudioSource NewHighScoreAudioSource;
+    public AudioSource GridClearedAudioSource;
+    public AudioSource MissAudioSource;
+    public AudioSource PlaceAudioSource;
+    public AudioSource TickAudioSource;
+    public AudioSource GameOverAudioSource;
 
     private Stacker _stacker;
     private Coroutine _tickCoroutine;
@@ -195,6 +200,7 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(_timeBetweenTicks);
             _stacker.Tick();
+            TickAudioSource.Play();
             DisplayGrid();
         }
     }
@@ -257,6 +263,12 @@ public class GameManager : MonoBehaviour
                     GameOver();
                     return;
                 }
+
+                MissAudioSource.Play();
+            }
+            else
+            {
+                PlaceAudioSource.Play();
             }
 
             UpdateScore();
@@ -268,6 +280,7 @@ public class GameManager : MonoBehaviour
             if (_stacker.ActiveRow == _stacker.Height)
             {
                 _stacker.ResetHeight();
+                GridClearedAudioSource.Play();
                 UpdateGridsCleared();
             }
 
@@ -307,6 +320,7 @@ public class GameManager : MonoBehaviour
 
     private void GameOver()
     {
+        GameOverAudioSource.Play();
         StopCoroutine(_tickCoroutine);
         _canPlace = false;
         var newHighScoreAchieved = false;
@@ -345,7 +359,7 @@ public class GameManager : MonoBehaviour
         test.ForEach(x => x.gameObject.SetActive(false));
 
         Sequence mySequence = DOTween.Sequence();
-        mySequence.AppendInterval(1f);
+        mySequence.AppendInterval(2f);
 
         foreach (var text in test)
         {
