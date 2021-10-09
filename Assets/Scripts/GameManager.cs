@@ -238,19 +238,22 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            GameOver();
-            return;
-        }
+        #if DEBUG
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                GameOver();
+                return;
+            }
 
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            _highScore = 0;
-            _score = 100;
-            GameOver();
-            return;
-        }
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                _highScore = 0;
+                _score = 100;
+                GameOver();
+                return;
+            }
+        #endif
+
 
         if (Input.GetKeyDown(KeyCode.Space) && _canPlace)
         {
@@ -264,10 +267,28 @@ public class GameManager : MonoBehaviour
                     return;
                 }
 
+                //add the missed square effect
+                missedSquares.ForEach(x =>
+                {
+                    var cell = Blocks[_stacker.Width * x.YPos + x.XPos];
+                    cell.gameObject.GetComponent<Block>().GlowAndFade();
+                });
                 MissAudioSource.Play();
             }
             else
             {
+                var prevRow = _stacker.ActiveRow - 1;
+                for (int i = 0; i < _stacker.Width; i++)
+                {
+                    if (_stacker.Stack[i, prevRow].State == State.Occupied)
+                    {
+                        var cell = Blocks[_stacker.Width * prevRow + i];
+                        cell.gameObject.GetComponent<Block>().Shine();
+                    }
+                }
+                //go to active row - 1
+                //find occupied rows
+                //give them the shine
                 PlaceAudioSource.Play();
             }
 
