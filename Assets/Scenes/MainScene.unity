@@ -3862,6 +3862,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Grid: {fileID: 728591657}
   Blocks: []
+  vacantCellColour: {r: 0.53519934, g: 0.53646755, b: 0.5377358, a: 1}
+  occupiedCellColour: {r: 0.29236382, g: 0.3542186, b: 0.8490566, a: 1}
   startScreenPanel: {fileID: 1517236399}
   ssHighScoreText: {fileID: 83327372}
   gameplayScreenPanel: {fileID: 1552115145}
@@ -10226,8 +10228,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -36}
-  m_SizeDelta: {x: 305.09775, y: 118.03041}
+  m_AnchoredPosition: {x: 28.601, y: -29}
+  m_SizeDelta: {x: 362.2999, y: 115.6154}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1338285311
 MonoBehaviour:
@@ -10249,10 +10251,15 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: LALALALA
+  m_text: "Fonts\r\nBlade Runner Movie Font by Phil Steinschneider (dafont.com)\r\nNFS
+    by Jltv (dafont.com)\r\n\r\nSounds\r\nUniversal Sound FX by IMPHENZIA (assetstore.unity.com)\r\n\r\nMusic\r\nUltimate
+    Game Music Collection by John Leonard French (assetstore.unity.com)\r\n\r\nSkybox\r\nSpaceSkiesFree
+    by PULSAR BYTES (assetstore.unity.com)\r\n\r\nEffects\r\nAll In 1 Sprite Shader
+    by Seaside Studios (assetstore.unity.com)\r\n\r\nOther\r\nDOTween Pro by Demigiant
+    (assetstore.unity.com)\r"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: a493cdb187b87b8408c843455d1462a4, type: 2}
-  m_sharedMaterial: {fileID: 6583620404114503750, guid: a493cdb187b87b8408c843455d1462a4, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -10279,8 +10286,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 22
-  m_fontSizeBase: 22
+  m_fontSize: 11.41
+  m_fontSizeBase: 11.41
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -10299,7 +10306,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 398
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_isTextTruncated: 0
@@ -10320,15 +10327,15 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 0, w: -124.37224}
   m_textInfo:
     textComponent: {fileID: 1338285311}
-    characterCount: 8
+    characterCount: 446
     spriteCount: 0
-    spaceCount: 0
-    wordCount: 1
+    spaceCount: 56
+    wordCount: 64
     linkCount: 0
-    lineCount: 1
+    lineCount: 19
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -10977,7 +10984,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -235}
+  m_AnchoredPosition: {x: 0, y: -233}
   m_SizeDelta: {x: 305.09775, y: 118.03041}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1439879750
@@ -11000,11 +11007,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'It''s like the stacker game at the arcade but it doesn''t stop until you
-    die '
+  m_text: Use the spacebar to place a row of blocks. Align the rows on top of each
+    other and build your tower. It gets faster, but resets endlessly at the top!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: a493cdb187b87b8408c843455d1462a4, type: 2}
-  m_sharedMaterial: {fileID: 6583620404114503750, guid: a493cdb187b87b8408c843455d1462a4, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -11031,8 +11038,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 22
-  m_fontSizeBase: 22
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -11075,12 +11082,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1439879750}
-    characterCount: 75
+    characterCount: 149
     spriteCount: 0
-    spaceCount: 15
-    wordCount: 15
+    spaceCount: 29
+    wordCount: 30
     linkCount: 0
-    lineCount: 4
+    lineCount: 5
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -14369,7 +14376,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 828cb418ad5a34891a8b5ad737dcea5b, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.6
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 1
   Mute: 0

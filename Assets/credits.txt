@@ -5,5 +5,14 @@ NFS by Jltv (dafont.com)
 Sounds
 Universal Sound FX by IMPHENZIA (assetstore.unity.com)
 
+Music
+Ultimate Game Music Collection by John Leonard French (assetstore.unity.com)
+
 Skybox
 SpaceSkiesFree by PULSAR BYTES (assetstore.unity.com)
+
+Effects
+All In 1 Sprite Shader by Seaside Studios (assetstore.unity.com)
+
+Other
+DOTween Pro by Demigiant (assetstore.unity.com)

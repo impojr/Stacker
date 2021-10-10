@@ -15,13 +15,13 @@ public class Block : MonoBehaviour
     void Awake()
     {
         _uiImage = GetComponent<Image>();
+        _uiImage.color = FindObjectOfType<GameManager>().vacantCellColour;
         _material = new Material(_uiImage.material);
         _originalGlowColor = _material.GetColor("_GlowColor");
         _originalMainColor = _material.color;
         ResetMaterial();
     }
 
-    // Update is called once per frame
     void Update()
     {
         #if DEBUG
@@ -52,15 +52,6 @@ public class Block : MonoBehaviour
         {
             _material.DOFloat(0f, "_HitEffectBlend", 0.9f);
         });
-        //Sequence mySequence = DOTween.Sequence();
-        //mySequence.Append(_material.DOColor(Color.red, "_GlowColor", 0.2f)).OnStart(() =>
-        //{
-        //    _material.color = Color.red;
-        //    _material.DOFloat(1f, "_Glow", 0.2f);
-        //}).OnComplete(() =>
-        //{
-        //    _material.DOFloat(1f, "_FadeAmount", 0.8f);
-        //});
     }
 
     public void ResetMaterial()

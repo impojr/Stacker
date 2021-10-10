@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour
     public GameObject Grid;
     public Image[] Blocks;
 
+    public Color vacantCellColour;
+    public Color occupiedCellColour;
+
     [Space] 
     [Header("UI Components")]
     public GameObject startScreenPanel;
@@ -245,6 +248,7 @@ public class GameManager : MonoBehaviour
                 return;
             }
 
+            // test high score 
             if (Input.GetKeyDown(KeyCode.A))
             {
                 _highScore = 0;
@@ -286,9 +290,7 @@ public class GameManager : MonoBehaviour
                         cell.gameObject.GetComponent<Block>().Shine();
                     }
                 }
-                //go to active row - 1
-                //find occupied rows
-                //give them the shine
+
                 PlaceAudioSource.Play();
             }
 
@@ -437,11 +439,11 @@ public class GameManager : MonoBehaviour
             {
                 if (stack[i, j].State == State.Occupied)
                 {
-                    Blocks[_stacker.Width * j + i].color = Color.red;
+                    Blocks[_stacker.Width * j + i].color = occupiedCellColour;
                 }
                 else
                 {
-                    Blocks[_stacker.Width * j + i].color = Color.green;
+                    Blocks[_stacker.Width * j + i].color = vacantCellColour;
                 }
             }
         }
