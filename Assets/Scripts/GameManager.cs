@@ -33,6 +33,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject creditsPanel;
 
+    [Space]
+    [Header("Audio Components")]
     public AudioSource UiTextScaleAudioSource;
     public AudioSource UiTextMovementAudioSource;
     public AudioSource NewHighScoreAudioSource;
@@ -60,9 +62,19 @@ public class GameManager : MonoBehaviour
     private Vector3 _gridsClearedTextPosition;
 
     private bool updateHighScoreColor;
-
     private SortedList<int, float> _speedModifiers;
     private readonly string _highScoreKey = "HighScore";
+
+    // these variables are for the highscore text update
+    // these are not shown in the inspector, but could be made visible if 
+    // wanted
+    private float lerpTime = 5f;
+    private float t = 0f;
+    private int colourIndex = 0;
+    private Color[] highScoreColours = new[]
+    {
+        Color.red, new Color(1, 0.5f, 0), new Color(1,1,0), Color.green, Color.blue, new Color(75f/255f, 0, 130f/255f), new Color(148f/255f,0,211f/255f)
+    };
 
     private void InitializeSpeedModifiers()
     {
@@ -216,15 +228,6 @@ public class GameManager : MonoBehaviour
         _canPlace = true;
     }
 
-    private float lerpTime = 5f;
-    private float t = 0f;
-    private int colourIndex = 0;
-
-    private Color[] highScoreColours = new[]
-    {
-        Color.red, new Color(1, 0.5f, 0), new Color(1,1,0), Color.green, Color.blue, new Color(75f/255f, 0, 130f/255f), new Color(148f/255f,0,211f/255f) 
-    };
-
     private void Update()
     {
         if (updateHighScoreColor)
@@ -265,18 +268,19 @@ public class GameManager : MonoBehaviour
             var missedSquares = _stacker.Place();
             if (missedSquares.Count != 0)
             {
-                if (_stacker.StackWidth < 1)
-                {
-                    GameOver();
-                    return;
-                }
-
                 //add the missed square effect
                 missedSquares.ForEach(x =>
                 {
                     var cell = Blocks[_stacker.Width * x.YPos + x.XPos];
                     cell.gameObject.GetComponent<Block>().GlowAndFade();
                 });
+
+                if (_stacker.StackWidth < 1)
+                {
+                    GameOver();
+                    return;
+                }
+
                 MissAudioSource.Play();
             }
             else
@@ -352,14 +356,15 @@ public class GameManager : MonoBehaviour
         {
             newHighScoreAchieved = true;
             _highScore = _score;
+            gpHighScoreText.text = _highScore.ToString();
             PlayerPrefs.SetInt(_highScoreKey, _score);
             PlayerPrefs.Save();
         }
 
-        Effects(newHighScoreAchieved);
+        AnimateUI(newHighScoreAchieved);
     }
 
-    private void Effects(bool newHighScoreAchieved)
+    private void AnimateUI(bool newHighScoreAchieved)
     {
         float moveDistance = 50f;
         float moveDuration = 0.1f;
@@ -367,24 +372,26 @@ public class GameManager : MonoBehaviour
         Vector3 effectVector = new Vector3(1, 1, 1);
         float scaleEffectDuration = 0.25f;
         float effectDuration = 0.1f;
+        Vector3 punchScaleVector = new Vector3(0, 2, 2);
+        float effectDelay = 0.5f;
 
-        List<TMP_Text> test = new List<TMP_Text> { currentScoreText, speedText, rowsClearedText, gridsClearedText };
+        List<TMP_Text> textsToAnimate = new List<TMP_Text> { currentScoreText, speedText, rowsClearedText, gridsClearedText };
 
         if (!newHighScoreAchieved)
         {
-            test.Add(gpHighScoreText);
+            textsToAnimate.Add(gpHighScoreText);
         }
         else
         {
             gpHighScoreText.gameObject.SetActive(false);
         }
 
-        test.ForEach(x => x.gameObject.SetActive(false));
+        textsToAnimate.ForEach(x => x.gameObject.SetActive(false));
 
         Sequence mySequence = DOTween.Sequence();
         mySequence.AppendInterval(2f);
 
-        foreach (var text in test)
+        foreach (var text in textsToAnimate)
         {
             mySequence.Append(text.transform.DOMoveX(text.transform.position.x - moveDistance, moveDuration).OnStart(() =>
                 {
@@ -394,17 +401,20 @@ public class GameManager : MonoBehaviour
             mySequence.Append(text.transform.DOScale(scaleEffectVector, scaleEffectDuration).OnComplete(() =>
             {
                 UiTextScaleAudioSource.Play();
-                text.transform.DOPunchScale(new Vector3(0, 2, 2), effectDuration);
+                text.transform.DOPunchScale(punchScaleVector, effectDuration);
                 text.transform.DOPunchRotation(effectVector, effectDuration);
                 text.transform.DOPunchPosition(effectVector, effectDuration);
             }));
 
-            mySequence.AppendInterval(0.5f);
+            mySequence.AppendInterval(effectDelay);
         }
 
         if (newHighScoreAchieved)
         {
-            mySequence.AppendInterval(0.5f);
+            var highScoreYScaleEndValue = 3f;
+            var highScoreYScaleEffectDuration = 0.5f;
+
+            mySequence.AppendInterval(effectDelay);
 
             mySequence.Append(gpHighScoreText.transform.DOMoveX(gpHighScoreText.transform.position.x - moveDistance, moveDuration).OnStart(() =>
             {
@@ -415,10 +425,10 @@ public class GameManager : MonoBehaviour
             {
                 UiTextScaleAudioSource.Play();
                 NewHighScoreAudioSource.Play();
-                gpHighScoreText.transform.DOPunchScale(new Vector3(0, 2, 2), effectDuration);
+                gpHighScoreText.transform.DOPunchScale(punchScaleVector, effectDuration);
                 gpHighScoreText.transform.DOPunchRotation(effectVector, effectDuration);
                 gpHighScoreText.transform.DOPunchPosition(effectVector, effectDuration);
-                gpHighScoreText.transform.DOScaleY(3f, 0.5f).SetLoops(-1, LoopType.Yoyo);
+                gpHighScoreText.transform.DOScaleY(highScoreYScaleEndValue, highScoreYScaleEffectDuration).SetLoops(-1, LoopType.Yoyo);
                 updateHighScoreColor = true;
             }));
         }
@@ -437,14 +447,7 @@ public class GameManager : MonoBehaviour
         {
             for (var j = 0; j < _stacker.Height; j++)
             {
-                if (stack[i, j].State == State.Occupied)
-                {
-                    Blocks[_stacker.Width * j + i].color = occupiedCellColour;
-                }
-                else
-                {
-                    Blocks[_stacker.Width * j + i].color = vacantCellColour;
-                }
+                Blocks[_stacker.Width * j + i].color = stack[i, j].State == State.Occupied ? occupiedCellColour : vacantCellColour;
             }
         }
     }

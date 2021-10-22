@@ -3862,7 +3862,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Grid: {fileID: 728591657}
   Blocks: []
-  vacantCellColour: {r: 0.53519934, g: 0.53646755, b: 0.5377358, a: 1}
+  vacantCellColour: {r: 1, g: 1, b: 1, a: 1}
   occupiedCellColour: {r: 0.29236382, g: 0.3542186, b: 0.8490566, a: 1}
   startScreenPanel: {fileID: 1517236399}
   ssHighScoreText: {fileID: 83327372}

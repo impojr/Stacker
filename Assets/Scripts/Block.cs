@@ -17,7 +17,6 @@ public class Block : MonoBehaviour
         _uiImage = GetComponent<Image>();
         _uiImage.color = FindObjectOfType<GameManager>().vacantCellColour;
         _material = new Material(_uiImage.material);
-        _originalGlowColor = _material.GetColor("_GlowColor");
         _originalMainColor = _material.color;
         ResetMaterial();
     }
@@ -56,10 +55,7 @@ public class Block : MonoBehaviour
 
     public void ResetMaterial()
     {
-        _material.SetColor("_GlowColor", _originalGlowColor);
-        _material.SetFloat("_Glow", 0);
         _material.SetFloat("_ShineLocation", 0);
-        _material.SetFloat("_FadeAmount", 0);
         _material.SetFloat("_HitEffectBlend", 0);
         _material.color = _originalMainColor;
         _uiImage.material = _material;
