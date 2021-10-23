@@ -1,6 +1,9 @@
 # Stacker
 
-Available to play at itch.io: https://impojr.itch.io/endless-stacker
+<div width="400px" align="center">
+  <img src="https://img.itch.zone/aW1nLzcyNjExODUucG5n/315x250%23c/M8tlgz.png">
+  <p>Play Endless Stacker on itch.io: https://impojr.itch.io/endless-stacker</p>
+</div>
 
 Just like the frustrating arcade game, but forever!
 
