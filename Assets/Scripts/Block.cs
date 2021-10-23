@@ -41,7 +41,7 @@ public class Block : MonoBehaviour
 
     public void Shine()
     {
-        _material.DOFloat(1f, "_ShineLocation", 0.5f);
+        _material.DOFloat(1f, "_ShineLocation", 0.5f).OnComplete(ResetMaterial);
     }
 
     public void GlowAndFade()
@@ -49,7 +49,7 @@ public class Block : MonoBehaviour
         // we want this to be roughly 1 second to match the sound
         _material.DOFloat(1f, "_HitEffectBlend", 0.1f).OnComplete(() =>
         {
-            _material.DOFloat(0f, "_HitEffectBlend", 0.9f);
+            _material.DOFloat(0f, "_HitEffectBlend", 0.9f).OnComplete(ResetMaterial);
         });
     }
 
